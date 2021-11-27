@@ -1,0 +1,60 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "React Material UI for Hospital bills fundraiser App",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack serve --mode development --open --hot",
+    "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ipkiruiYegon/Nilipie-Bill.git"
+  },
+  "keywords": [
+    "React"
+  ],
+  "author": "Yegon and Company",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ipkiruiYegon/Nilipie-Bill.git/issues"
+  },
+  "homepage": "https://github.com/ipkiruiYegon/Nilipie-Bill.git#readme",
+  "dependencies": {
+    "@babel/runtime": "^7.14.0",
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@mui/icons-material": "^5.0.1",
+    "@mui/material": "^5.2.1",
+    "@mui/styles": "^5.2.1",
+    "@mui/x-data-grid": "^5.0.0-beta.2",
+    "formik": "^2.2.8",
+    "history": "^5.0.0",
+    "moment": "^2.29.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-feather": "^2.0.9",
+    "react-helmet-async": "^1.0.9",
+    "react-image-crop": "^9.0.4",
+    "react-lazyload": "^3.2.0",
+    "react-perfect-scrollbar": "^1.5.8",
+    "react-router": "^6.0.0-beta.0",
+    "react-router-dom": "^6.0.0-beta.0",
+    "yup": "^0.32.9"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/plugin-transform-runtime": "^7.14.3",
+    "@babel/preset-env": "^7.14.2",
+    "@babel/preset-react": "^7.13.13",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^6.2.0",
+    "file-loader": "^6.2.0",
+    "html-webpack-plugin": "^5.3.1",
+    "react-hot-loader": "^4.13.0",
+    "style-loader": "^3.2.1",
+    "webpack": "^5.37.1",
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-server": "^4.0.0"
+  }
+}
