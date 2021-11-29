@@ -39,6 +39,8 @@ build/Release
 
 # Dependency directories
 Frontend/node_modules
+venv/
+Backend/venv
 node_modules/
 jspm_packages/
 
@@ -70,6 +72,9 @@ typings/
 .yarn-integrity
 
 # dotenv environment variables file
+Backend/.env
+Backend/database.env
+Backend/database.url.env
 .env
 .env.test
 
