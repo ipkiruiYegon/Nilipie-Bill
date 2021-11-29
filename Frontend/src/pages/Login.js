@@ -40,6 +40,7 @@ const Copyright = (props) => {
 };
 
 const SignIn = () => {
+  // const API_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   // const [authProfile, setAuthProfile] = useRecoilState(userProfile);
 
@@ -109,52 +110,39 @@ const SignIn = () => {
               <Formik
                 initialValues={initialValues}
                 onSubmit={async (values, props) => {
+                  const { username, password } = values;
+                  console.log(username);
+                  console.log(password);
+                  console.log(JSON.stringify({ ...values }));
                   try {
-                    const user = await authenticateUser({ variables: values });
+                    const loginRequest = {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ ...values }),
+                    };
+                    let resStatus;
 
-                    if (user.data.authenticateUser) {
-                      sessionStorage.removeItem("token");
-                      dispatch({
-                        type: "LOGIN",
-                        payload: user.data.authenticateUser.User,
+                    fetch("http://localhost:8008/login", loginRequest)
+                      .then((res) => {
+                        console.log("response", res);
+                        resStatus = res.status;
+                        return res.json();
+                      })
+                      .then((data) => {
+                        console.log(data);
+                        navigate("/app/dashboard", { replace: true });
                       });
-
-                      navigate("/app/dashboard", { replace: true });
-                    }
                   } catch (error) {
-                    if (error.graphQLErrors) {
-                      error.graphQLErrors.map(({ message, extensions }) => {
-                        if (message === "User required to change password") {
-                          setPasswordDialogForm({
-                            isOpen: true,
-                            userName: values.username,
-                          });
-                        } else {
-                          setNotify({
-                            isOpen: true,
-                            message: message,
-                            type: "error",
-                          });
-                        }
-                      });
-                      props.setSubmitting(false);
-                      props.resetForm();
-                    } else if (error.networkError) {
-                      setNotify({
-                        isOpen: true,
-                        message:
-                          "Network error, could not connect to the server",
-                        type: "error",
-                      });
-                    } else {
-                      setNotify({
-                        isOpen: true,
-                        message: "Internal Server error",
-                        type: "error",
-                      });
-                      props.setSubmitting(false);
-                      props.resetForm();
-                    }
+                    props.setSubmitting(false);
+                    props.resetForm();
+
+                    setNotify({
+                      isOpen: true,
+                      message: JSON.stringify(error),
+                      type: "error",
+                    });
+                    props.setSubmitting(false);
+                    props.resetForm();
                   }
                 }}
                 validationSchema={userAuthenticationRules}
