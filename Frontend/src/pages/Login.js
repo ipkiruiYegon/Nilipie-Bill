@@ -20,6 +20,7 @@ import { userAuthenticationRules } from "../validators";
 import CircularProgress from "@mui/material/CircularProgress";
 import ChangePasswordDialogForm from "../components/PasswordChangeForm";
 import Notification from "../components/Notification";
+import { AuthContext } from "../App";
 
 const Copyright = (props) => {
   return (
@@ -40,7 +41,8 @@ const Copyright = (props) => {
 };
 
 const SignIn = () => {
-  // const API_URL = process.env.REACT_APP_API_URL;
+  const { dispatch } = useContext(AuthContext);
+  const API_URL = process.env.API_URL;
   const navigate = useNavigate();
   // const [authProfile, setAuthProfile] = useRecoilState(userProfile);
 
@@ -111,9 +113,6 @@ const SignIn = () => {
                 initialValues={initialValues}
                 onSubmit={async (values, props) => {
                   const { username, password } = values;
-                  console.log(username);
-                  console.log(password);
-                  console.log(JSON.stringify({ ...values }));
                   try {
                     const loginRequest = {
                       method: "POST",
@@ -122,15 +121,31 @@ const SignIn = () => {
                     };
                     let resStatus;
 
-                    fetch("http://localhost:8008/login", loginRequest)
+                    fetch(`${API_URL}/login`, loginRequest)
                       .then((res) => {
-                        console.log("response", res);
                         resStatus = res.status;
                         return res.json();
                       })
                       .then((data) => {
-                        console.log(data);
-                        navigate("/app/dashboard", { replace: true });
+                        // success response
+                        if (data && resStatus === 200) {
+                          sessionStorage.removeItem("token");
+                          dispatch({
+                            type: "LOGIN",
+                            payload: data,
+                          });
+                          props.setSubmitting(false);
+                          navigate("/admin/dashboard", { replace: true });
+                        } else {
+                          // error response
+                          setNotify({
+                            isOpen: true,
+                            message: data.detail,
+                            type: "error",
+                          });
+                          props.setSubmitting(false);
+                          props.resetForm();
+                        }
                       });
                   } catch (error) {
                     props.setSubmitting(false);

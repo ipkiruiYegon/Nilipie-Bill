@@ -16,6 +16,7 @@ const initialState = {
   User: null,
 };
 const reducer = (state, action) => {
+  console.log(action.payload);
   switch (action.type) {
     case "LOGIN":
       sessionStorage.setItem("token", JSON.stringify(action.payload.token));
@@ -38,25 +39,42 @@ const reducer = (state, action) => {
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const API_URL = process.env.API_URL;
 
   useEffect(() => {
     const checkStoredToken = async () => {
       if (!state.isAuthenticated) {
         let token = sessionStorage.getItem("token");
-        token = JSON.parse(token);
         if (token && token !== "undefined" && token !== "" && token !== null) {
+          token = JSON.parse(token);
           try {
-            const response = await client.query({
-              query: GET_AUTHENTICATED_USER_PROFILE_TOKEN,
-              variables: { token: token },
-              fetchPolicy: "network-only",
-            });
-            if (response.data.authUserProfile.isAuthenticated) {
-              dispatch({
-                type: "LOGIN",
-                payload: response.data.authUserProfile.userProfile,
+            const authRequest = {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: { token: token },
+            };
+            console.log(token);
+            let resStatus;
+
+            fetch(`${API_URL}/auth`, authRequest)
+              .then((res) => {
+                resStatus = res.status;
+                return res.json();
+              })
+              .then((data) => {
+                console.log(data);
+                if (data && resStatus === 200) {
+                  sessionStorage.removeItem("token");
+                  dispatch({
+                    type: "LOGIN",
+                    payload: data,
+                  });
+                  props.setSubmitting(false);
+                  navigate("/admin/dashboard", { replace: true });
+                } else {
+                  console.log("data", data);
+                }
               });
-            }
           } catch (error) {
             dispatch({
               type: "LOGOUT",
