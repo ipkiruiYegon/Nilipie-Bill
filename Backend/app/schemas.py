@@ -21,6 +21,7 @@ class User(UserBase):
     email: str
     is_active: bool
     last_login: str
+    token:str
 
     class Config:
         orm_mode = True

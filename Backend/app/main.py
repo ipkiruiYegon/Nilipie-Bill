@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 from . import crud,schemas,model
 from .database import SessionLocal, engine
-from .functions.users import authenticate_user,create_access_token
+from .functions.users import authenticate_user,create_access_token, get_current_user
 
 model.Base.metadata.create_all(bind=engine)
 
@@ -52,12 +52,12 @@ async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username already registered")
     return crud.create_user(db=db, user=user)
 
-@app.post("/login/")
+@app.post("/login/",response_model=schemas.User)
 async def login(login: Login, db: Session = Depends(get_db)):
     # check if user with supplied credentials are valid.
     user = await authenticate_user(db, login.username.title(),login.password)
     if not user:
-        raise HTTPException(status_code=403, detail="Either Username or Password is incorrect 1")
+        raise HTTPException(status_code=403, detail="Either Username or Password is wrong")
     
     # issue token to user.
     token = await create_access_token({"userid":user.id,"email":user.email,"status":user.is_active})
@@ -69,5 +69,13 @@ async def login(login: Login, db: Session = Depends(get_db)):
     user.last_login = datetime.now()
     db.commit()
     
-    return {"Message":"Login Success", "token":token}
+    return user
+
+@app.post("/auth/",response_model=schemas.User)
+async def auth(token: str, db: Session = Depends(get_db)):
+    # check if token is valid.
+    user = await get_current_user(db, token)
+    if not user:
+        raise HTTPException(status_code=403, detail="Could not validate Token")
+    return user
 
