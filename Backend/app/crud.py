@@ -11,6 +11,9 @@ async def get_user(db: Session, user_id: int):
 async def get_user_by_email(db: Session, email: str):
     return db.query(model.User).filter(model.User.email == email).first()
 
+async def get_user_by_email_id(db: Session, email: str, user_id: int):
+    return db.query(model.User).filter(model.User.email == email, model.User.id == user_id).first()
+
 async def get_user_by_username(db: Session, username: str):
     return db.query(model.User).filter(model.User.username == username).first()
 
