@@ -1,11 +1,12 @@
 const path = require("path");
 const webpack = require("webpack");
-const configDATA = require("./config.json");
+const Dotenv = require("dotenv-webpack");
 
-const port = configDATA.PORT || 8001;
+require("dotenv").config();
+const { PORT: port, NODE_ENV: mode } = process.env;
 
 module.exports = {
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [new Dotenv(), new webpack.HotModuleReplacementPlugin()],
   entry: path.resolve(__dirname, "./index.js"),
   output: {
     path: path.resolve(__dirname, "public"),
